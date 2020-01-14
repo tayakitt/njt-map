@@ -616,7 +616,7 @@ function setClusterMarkers() {
       infoHtml = '<div id="content">' +
         '<h3>' +
         Math.round(location["weight"]) +
-        ' pounds of medical supply such as ' +
+        ' pounds of medical supplies such as ' +
         location["supplies"] +
         ' were donated here' +
         '</h3>' +
@@ -625,7 +625,7 @@ function setClusterMarkers() {
       infoHtml = '<div id="content">' +
         '<h3>' +
         Math.round(location["weight"]) +
-        ' pounds of medical supply were donated here' +
+        ' pounds of medical supplies were donated here' +
         '</h3>' +
         '</div>';
     }
