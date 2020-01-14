@@ -610,12 +610,24 @@ function setClusterMarkers() {
       }
     });
 
-    var infoHtml = '<div id="content">' +
-      '<h1>' +
-      "lbs of medical supply donated: " +
-      location["weight"] +
-      '</h1>' +
-      '</div>';
+    var infoHtml
+    if (location["supplies"]) {
+      infoHtml = '<div id="content">' +
+        '<h3>' +
+        Math.round(location["weight"]) +
+        ' pounds of medical supply such as ' +
+        location["supplies"] +
+        ' were donated here' +
+        '</h3>' +
+        '</div>';
+    } else {
+      infoHtml = '<div id="content">' +
+        '<h3>' +
+        Math.round(location["weight"]) +
+        ' pounds of medical supply were donated here' +
+        '</h3>' +
+        '</div>';
+    }
 
     // Information on marker click
     var infowindow = new google.maps.InfoWindow({
