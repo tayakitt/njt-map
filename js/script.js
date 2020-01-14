@@ -3,6 +3,7 @@
 firebase.initializeApp(FIREBASECONFIG);
 var db = firebase.firestore();
 
+// aggregate weight id lat and lng are the same
 var locations = [
   {
     "Country": "Havana Cuba",
@@ -629,13 +630,18 @@ function setClusterMarkers() {
         '</div>';
     }
 
-    // Information on marker click
-    var infowindow = new google.maps.InfoWindow({
+    // show info window on marker click
+    var infoWindow = new google.maps.InfoWindow({
       content: infoHtml
     });
 
     marker.addListener('click', function () {
-      infowindow.open(map, marker);
+      infoWindow.open(map, marker);
+    });
+
+    // close info window on map click
+    google.maps.event.addListener(map, "click", function (event) {
+      infoWindow.close();
     });
 
     return marker;
