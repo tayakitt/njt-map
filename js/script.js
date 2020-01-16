@@ -577,8 +577,8 @@ var map;
 function initMap() {
   geocoder = new google.maps.Geocoder();
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 4,
-    center: { lat: 37.4419, lng: -122.1419 }
+    zoom: 3,
+    center: { lat: 21.0079, lng: 10.9408 }
   });
   // map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/google.json');
   // codeAddress("Bangkok, Thailand");
@@ -614,19 +614,19 @@ function setClusterMarkers() {
     var infoHtml
     if (location["supplies"]) {
       infoHtml = '<div id="content">' +
-        '<h3>' +
+        '<b>' +
         Math.round(location["weight"]) +
         ' pounds of medical supplies such as ' +
         location["supplies"] +
         ' were donated here' +
-        '</h3>' +
+        '</b>' +
         '</div>';
     } else {
       infoHtml = '<div id="content">' +
-        '<h3>' +
+        '<b>' +
         Math.round(location["weight"]) +
         ' pounds of medical supplies were donated here' +
-        '</h3>' +
+        '</b>' +
         '</div>';
     }
 
