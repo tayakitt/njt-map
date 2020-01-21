@@ -3,6 +3,19 @@
 firebase.initializeApp(FIREBASECONFIG);
 var db = firebase.firestore();
 
+// get trip and update GeoJSON data
+getTrips();
+
+// create map and set center lat & lng
+var map = L.map('map').setView([21.0079, 10.9408], 3);
+var geojson;
+
+// use mapBox as the base map provider
+L.tileLayer.provider('MapBox', {
+  id: 'mapbox.light',
+  accessToken: 'pk.eyJ1IjoidGF5YWtpdHQiLCJhIjoiY2s1Y284Ym9hMW50ODNnbzMwbHBmaHR1eiJ9._DGyRf1U27iZwnGv5Ar56A'
+}).addTo(map);
+
 function getTrips() {
   var tripInfo = {};
   db.collection("TripCollection").get().then((querySnapshot) => {
@@ -32,37 +45,29 @@ function getTrips() {
         feature["properties"] = { ...feature["properties"], ...tripInfo[featureCountry] }
       }
     });
+
+    geojson = L.geoJson(countries, { style: style, onEachFeature: onEachFeature }).addTo(map);
+    console.log({ tripInfo });
+    console.log("done updating geoJSON");
+    console.log({ countries });
   });
 }
 
-// get trip and update GeoJSON data
-getTrips();
-
-// create map and set center lat & lng
-var map = L.map('map').setView([21.0079, 10.9408], 3);
-var geojson;
-
-// use mapBox as the base map provider
-L.tileLayer.provider('MapBox', {
-  id: 'mapbox.light',
-  accessToken: 'pk.eyJ1IjoidGF5YWtpdHQiLCJhIjoiY2s1Y284Ym9hMW50ODNnbzMwbHBmaHR1eiJ9._DGyRf1U27iZwnGv5Ar56A'
-}).addTo(map);
-
-function getColor(d) {
-  if (!d) {
-    return 'red'; return 'none';
-  } else if (d > 1000) {
-    return '#800026';
-  } else if (d > 500) {
-    return '#BD0026';
-  } else if (d > 200) {
-    return '#E31A1C';
-  } else if (d > 100) {
-    return '#FC4E2A';
-  } else if (d > 50) {
-    return '#FD8D3C';
+function getColor(trips) {
+  if (trips === undefined) {
+    return 'none';
+  } else if (trips > 50) {
+    return '#0e7261';
+  } else if (trips > 40) {
+    return '#139f88';
+  } else if (trips > 30) {
+    return '#19cdaf';
+  } else if (trips > 20) {
+    return '#32e6c8';
+  } else if (trips > 10) {
+    return '#60ecd4';
   } else {
-    return '#FFEDA0';
+    return '#8df1e1';
   }
 }
 
@@ -122,8 +127,6 @@ function onEachFeature(feature, layer) {
   });
 }
 
-geojson = L.geoJson(countries, { style: style, onEachFeature: onEachFeature }).addTo(map);
-
 // create information box on the top right
 var info = L.control();
 
@@ -141,7 +144,7 @@ info.update = function (props) {
 
   if (!props) {
     infoHTML += 'Hover over a country';
-  } else if (trips && suitcases && weight) {
+  } else if (trips || suitcases || weight) {
     infoHTML +=
       '<b>' + country + '</b>' +
       '<br />' + trips + (trips > 1 ? ' trips' : ' trip') +
@@ -165,7 +168,7 @@ var legend = L.control({ position: 'bottomright' });
 legend.onAdd = function (map) {
   // create a div with a class "info" and "legend"
   var div = L.DomUtil.create('div', 'info legend'),
-    grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+    grades = [1, 10, 20, 30, 40, 50],
     labels = [];
 
   // add title
