@@ -3,19 +3,52 @@
 firebase.initializeApp(FIREBASECONFIG);
 var db = firebase.firestore();
 
-var lmap = L.map('map').setView([21.0079, 10.9408], 3);
+function getTrips() {
+  var tripInfo = {};
+  db.collection("TripCollection").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      var data = doc.data();
+      var country = data['the_country_i_am_traveling_to'];
+      var weight = data["weight_lbs"] ? parseInt(data["weight_lbs"]) : 0;
+      var suitcases = data["number_suitcases"] ? parseInt(data["number_suitcases"]) : 0;
+      var existingCountry = tripInfo[country];
+
+      // aggregate weight, suitcases, and trips for each country
+      if (existingCountry) {
+        existingCountry["weight"] += weight;
+        existingCountry["suitcases"] += suitcases;
+        existingCountry["trips"] += 1;
+      } else if (country) { //ignore trips where country is not provided
+        tripInfo[country] = { weight, suitcases, trips: 1 };
+      }
+    });
+
+    // add information to GeoJSON properties
+    countries["features"].forEach(feature => {
+      var featureCountry = feature["properties"]["country"];
+
+      // add information if trip information exist for this country
+      if (tripInfo[featureCountry]) {
+        feature["properties"] = { ...feature["properties"], ...tripInfo[featureCountry] }
+      }
+    });
+  });
+}
+
+// get trip and update GeoJSON data
+getTrips();
+
+// create map and set center lat & lng
+var map = L.map('map').setView([21.0079, 10.9408], 3);
 var geojson;
 
 // use mapBox as the base map provider
 L.tileLayer.provider('MapBox', {
   id: 'mapbox.light',
   accessToken: 'pk.eyJ1IjoidGF5YWtpdHQiLCJhIjoiY2s1Y284Ym9hMW50ODNnbzMwbHBmaHR1eiJ9._DGyRf1U27iZwnGv5Ar56A'
-}).addTo(lmap);
+}).addTo(map);
 
-// var geojsonLayer = new L.GeoJSON.AJAX(countries);
-// geojsonLayer.addTo(lmap);
 function getColor(d) {
-  console.log(d);
   if (!d) {
     return 'red';
   }
@@ -74,7 +107,7 @@ function resetHighlight(e) {
 
 // zoom into the country on click
 function zoomToFeature(e) {
-  lmap.fitBounds(e.target.getBounds());
+  map.fitBounds(e.target.getBounds());
 }
 
 // add event handler on each country layers
@@ -86,7 +119,7 @@ function onEachFeature(feature, layer) {
   });
 }
 
-geojson = L.geoJson(countries, { style: style, onEachFeature: onEachFeature }).addTo(lmap);
+geojson = L.geoJson(countries, { style: style, onEachFeature: onEachFeature }).addTo(map);
 
 // create information box on the top right
 var info = L.control();
@@ -100,13 +133,16 @@ info.onAdd = function (map) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
-  this._div.innerHTML = '<h4> Information </h4>' + (props ?
-    '<b>' + props.country + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+  this._div.innerHTML = '<h4> Total Donation </h4>' + (props ?
+    '<b>' + props.country + '</b>' +
+    '<br />' + props.trips + ' trips' +
+    '<br />' + props.suitcases + ' suitcases' +
+    '<br />' + props.weight + ' pounds'
     : 'Hover over a country');
 };
 
 // add information box to map
-info.addTo(lmap);
+info.addTo(map);
 
 // create legend for colours
 var legend = L.control({ position: 'bottomright' });
@@ -129,4 +165,4 @@ legend.onAdd = function (map) {
   return div;
 };
 
-legend.addTo(lmap);
+legend.addTo(map);
