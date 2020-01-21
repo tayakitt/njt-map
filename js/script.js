@@ -50,22 +50,25 @@ L.tileLayer.provider('MapBox', {
 
 function getColor(d) {
   if (!d) {
-    return 'red';
+    return 'red'; return 'none';
+  } else if (d > 1000) {
+    return '#800026';
+  } else if (d > 500) {
+    return '#BD0026';
+  } else if (d > 200) {
+    return '#E31A1C';
+  } else if (d > 100) {
+    return '#FC4E2A';
+  } else if (d > 50) {
+    return '#FD8D3C';
+  } else {
+    return '#FFEDA0';
   }
-
-  return d > 1000 ? '#800026' :
-    d > 500 ? '#BD0026' :
-      d > 200 ? '#E31A1C' :
-        d > 100 ? '#FC4E2A' :
-          d > 50 ? '#FD8D3C' :
-            d > 20 ? '#FEB24C' :
-              d > 10 ? '#FED976' :
-                '#FFEDA0';
 }
 
 function style(feature) {
   return {
-    fillColor: getColor(feature.properties.numOfTrips),
+    fillColor: getColor(feature.properties.trips),
     weight: 2,
     opacity: 1,
     color: 'white',
@@ -133,13 +136,25 @@ info.onAdd = function (map) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
-  this._div.innerHTML = '<h4> Total Donation </h4>' + (props ?
-    '<b>' + props.country + '</b>' +
-    '<br />' + props.trips + ' trips' +
-    '<br />' + props.suitcases + ' suitcases' +
-    '<br />' + props.weight + ' pounds'
-    : 'Hover over a country');
-};
+  const { trips, suitcases, weight, country } = props || {};
+  var infoHTML = '<h4>Total Donation</h4>';
+
+  if (!props) {
+    infoHTML += 'Hover over a country';
+  } else if (trips && suitcases && weight) {
+    infoHTML +=
+      '<b>' + country + '</b>' +
+      '<br />' + trips + (trips > 1 ? ' trips' : ' trip') +
+      '<br />' + suitcases + (suitcases > 1 ? ' suitcases' : ' suitcase') +
+      '<br />' + weight + (weight > 1 ? ' pounds' : ' pound');
+  } else {
+    infoHTML +=
+      '<b>' + country + '</b>' +
+      '<br /> No information';
+  }
+
+  this._div.innerHTML = infoHTML;
+}
 
 // add information box to map
 info.addTo(map);
