@@ -55,7 +55,7 @@ function getTrips() {
 
 function getColor(trips) {
   if (trips === undefined) {
-    return 'none';
+    return 'transparent';
   } else if (trips > 50) {
     return '#0e7261';
   } else if (trips > 40) {
