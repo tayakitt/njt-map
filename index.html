@@ -19,10 +19,12 @@
     crossorigin=""></script>
   <!-- Leaflet plugin for configuring free tile providers -->
   <script src="js/leaflet-providers.js"></script>
-  <!-- Leaflet plugin for reading geoJSON data -->
-  <script src="js/leaflet-ajax.min.js"></script>
-  <script src="js/countries.geojson" type="text/javascript"></script>
 
+  <script src="js/country-coords.js" type="text/javascript"></script>
+  <!-- Leaflet plugin for clustering markers -->
+  <link rel="stylesheet" href="markerCluster/MarkerCluster.css" />
+  <link rel="stylesheet" href="markerCluster/MarkerCluster.Default.css" />
+  <script src="markerCluster/leaflet.markercluster-src.js"></script>
 </head>
 
 <body>
@@ -38,14 +40,6 @@
   <!-- custom js -->
   <script src="js/config.js"></script>
   <script src="js/script.js"></script>
-
-  <!-- Google maps API -->
-  <!-- <script
-    src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-  <script async defer
-    src="
-    https://maps.googleapis.com/maps/api/js?key=AIzaSyBB6JyfIq0QO-W3JE6mqaHJoi8CQdBX1Ew&libraries=visualization&callback=initMap">
-    </script> -->
 </body>
 
 </html>
