@@ -80,7 +80,7 @@ function createMarkers() {
           suitcases: markerInfo["suitcases"] || 0
         }
       );
-      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcases were donated in ${markerInfo["country"]} </b>`);
+      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcase(s) were donated in ${markerInfo["country"]} </b>`);
       markers.addLayer(marker);
     }
 
