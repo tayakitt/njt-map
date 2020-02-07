@@ -3,12 +3,8 @@
 firebase.initializeApp(FIREBASECONFIG);
 var db = firebase.firestore();
 
-// get trip and update GeoJSON data
-// getTrips();
-
 // create map and set center lat & lng
-var map = L.map('map').setView([21.0079, 10.9408], 3);
-var geojson;
+var map = L.map('map').setView([21.0079, 10.9408], 2);
 
 // use mapBox as the base map provider
 L.tileLayer.provider('MapBox', {
@@ -16,9 +12,9 @@ L.tileLayer.provider('MapBox', {
   accessToken: 'pk.eyJ1IjoidGF5YWtpdHQiLCJhIjoiY2s1Y284Ym9hMW50ODNnbzMwbHBmaHR1eiJ9._DGyRf1U27iZwnGv5Ar56A'
 }).addTo(map);
 
+// create markers layer
 createMarkers();
 
-// create markers
 function createMarkers() {
   var tripInfo = {};
   var markersInfo = [];
@@ -40,12 +36,12 @@ function createMarkers() {
       }
     });
 
-    // add information to GeoJSON properties
+    // combine tripInfo with markersInfo
     countryCoords.forEach(country => {
       const countryName = country["country"];
 
-      // add information if trip information exist for this country
-      if (tripInfo[countryName]) {
+      // only mark countries with suitcases > 0
+      if (tripInfo[countryName] && tripInfo[countryName]["suitcases"] > 0) {
         markersInfo.push({ ...tripInfo[countryName], ...country });
       }
     });
@@ -90,7 +86,5 @@ function createMarkers() {
 
     // add markers layer to map
     map.addLayer(markers);
-
-    console.log(markersInfo);
   });
 }
