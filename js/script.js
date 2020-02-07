@@ -50,17 +50,45 @@ function createMarkers() {
       }
     });
 
-    // cluster markers
-    var markers = L.markerClusterGroup();
+    // initialize marker cluster group
+    var markers = L.markerClusterGroup({
+      iconCreateFunction: function (cluster) {
+        var markers = cluster.getAllChildMarkers();
+        var clusterSuitcases = 0;
 
+        // count suitcases in the cluster
+        for (var i = 0; i < markers.length; i++) {
+          clusterSuitcases += markers[i]["options"]["suitcases"];
+        }
+
+        var c = ' marker-cluster-';
+        if (clusterSuitcases < 10) {
+          c += 'small';
+        } else if (clusterSuitcases < 100) {
+          c += 'medium';
+        } else {
+          c += 'large';
+        }
+
+        return new L.DivIcon({ html: '<div><span>' + clusterSuitcases + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+      },
+    });
+
+    // create each marker
     for (var i = 0; i < markersInfo.length; i++) {
       var markerInfo = markersInfo[i];
       var title = markerInfo["countryName"];
-      var marker = L.marker(new L.LatLng(markerInfo["latitude"], markerInfo["longitude"]), { title: title });
+      var marker = L.marker(
+        new L.LatLng(markerInfo["latitude"], markerInfo["longitude"]),
+        {
+          suitcases: markerInfo["suitcases"] || 0
+        }
+      );
       marker.bindPopup(title);
       markers.addLayer(marker);
     }
 
+    // add markers layer to map
     map.addLayer(markers);
 
     console.log(markersInfo);
