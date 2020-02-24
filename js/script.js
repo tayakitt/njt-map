@@ -9,7 +9,7 @@ var map = L.map('map').setView([21.0079, 10.9408], 2);
 // use mapBox as the base map provider
 L.tileLayer.provider('MapBox', {
   id: 'mapbox.light',
-  accessToken: 'pk.eyJ1IjoidGF5YWtpdHQiLCJhIjoiY2s1Y284Ym9hMW50ODNnbzMwbHBmaHR1eiJ9._DGyRf1U27iZwnGv5Ar56A'
+  accessToken: 'pk.eyJ1Ijoibm90anVzdHRvdXJpc3RzIiwiYSI6ImNrNnNkdXpoZjBmczIzbHJ6b2o4dWRpbHUifQ.UxdIRTjyU6ZVjpLazAZFvw'
 }).addTo(map);
 
 // create markers layer
@@ -48,6 +48,7 @@ function createMarkers() {
 
     // initialize marker cluster group
     var markers = L.markerClusterGroup({
+      showCoverageOnHover: false,
       iconCreateFunction: function (cluster) {
         var markers = cluster.getAllChildMarkers();
         var clusterSuitcases = 0;
@@ -80,7 +81,13 @@ function createMarkers() {
           suitcases: markerInfo["suitcases"] || 0
         }
       );
-      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcase(s) were donated in ${markerInfo["country"]} </b>`);
+      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcase were donated in ${markerInfo["country"]} </b>`);
+      marker.on('mouseover', function (e) {
+        this.openPopup();
+      });
+      marker.on('mouseout', function (e) {
+        this.closePopup();
+      });
       markers.addLayer(marker);
     }
 
