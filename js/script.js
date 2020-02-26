@@ -8,7 +8,6 @@ var map = L.map('map').setView([21.0079, 10.9408], 2);
 
 // use mapBox as the base map provider
 L.tileLayer.provider('MapBox', {
-  id: 'mapbox.light',
   accessToken: 'pk.eyJ1Ijoibm90anVzdHRvdXJpc3RzIiwiYSI6ImNrNnNkdXpoZjBmczIzbHJ6b2o4dWRpbHUifQ.UxdIRTjyU6ZVjpLazAZFvw'
 }).addTo(map);
 
@@ -58,6 +57,7 @@ function createMarkers() {
           clusterSuitcases += markers[i]["options"]["suitcases"];
         }
 
+        // determine marker style
         var c = ' marker-cluster-';
         if (clusterSuitcases < 10) {
           c += 'small';
@@ -81,7 +81,11 @@ function createMarkers() {
           suitcases: markerInfo["suitcases"] || 0
         }
       );
-      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcase were donated in ${markerInfo["country"]} </b>`);
+
+      // marker tooltip
+      marker.bindPopup(`<b> ${markerInfo["suitcases"]} suitcases were donated in ${markerInfo["country"]} </b>`);
+
+      // show or hide marker on hover
       marker.on('mouseover', function (e) {
         this.openPopup();
       });
